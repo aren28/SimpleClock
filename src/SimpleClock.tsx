@@ -3,6 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { Analytics } from "@vercel/analytics/next"
 
 // dayjsプラグインを拡張
 dayjs.extend(utc);
@@ -70,6 +71,7 @@ const SimpleClock = () => {
         position: 'relative'
       }}
     >
+      <Analytics />
       <Typography
         variant="h3"
         component="h2"
