@@ -3,7 +3,7 @@
 **シンプルで美しいリアルタイム時計アプリ**  
 WebSocketを活用した軽快な時間表示と、モダンなUIデザインを提供します。
 
-![Demo](https://via.placeholder.com/800x400?text=Simple+Clock+Demo)  
+![Demo](https://simple-clock-sigma.vercel.app/)  
 
 ## ✨ 特徴
 
@@ -18,7 +18,7 @@ WebSocketを活用した軽快な時間表示と、モダンなUIデザインを
 |----------------|---------------------------|
 | フロントエンド | React 19, TypeScript 5    |
 | UIフレームワーク| MUI (Material-UI v5)      |
-| リアルタイム通信| WebSocket                 |
+| リアルタイム通信| useEffectを使用                 |
 | ホスティング    | Vercel                    |
 | バージョン管理  | GitHub                    |
 | コード品質      | ESLint, Prettier          |
