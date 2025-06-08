@@ -19,7 +19,7 @@ A hybrid clock app that shows smooth animations based on accurate time data fetc
 - **Lightweight**: Built with React + TypeScript for fast performance
 - **Responsive**: Optimized display for all devices
 
-## 🛠 技術スタック
+## 🛠 Tech Stack
 
 | カテゴリ       | 技術要素                  |
 |----------------|---------------------------|
@@ -29,7 +29,7 @@ A hybrid clock app that shows smooth animations based on accurate time data fetc
 | Version Control | GitHub                    |
 | Code Quality      | ESLint          |
 
-## 🚀 セットアップ
+## 🚀 Setup
 
 ```bash
 # Clone the repository  
