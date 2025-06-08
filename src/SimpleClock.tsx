@@ -11,19 +11,23 @@ dayjs.extend(timezone);
 
 const SimpleClock = () => {
   const theme = useTheme();
+  const [currentTimeZone, setCurrentTimeZone] = useState(dayjs());
   const [time, setTime] = useState(dayjs());
   const [initialized, setInitialized] = useState(false);
 
   // 初期時刻取得とタイマー設定
   useEffect(() => {
+    const guessTimezone = dayjs.tz.guess();
+    setCurrentTimeZone(dayjs().tz(guessTimezone));
+
     const fetchTime = async () => {
       try {
-        const response = await fetch(import.meta.env.VITE_API_URL);
+        const response = await fetch(import.meta.env.VITE_API_URL + currentTimeZone);
         const data = await response.json();
-        setTime(dayjs(data.datetime).tz('Asia/Tokyo'));
+        setTime(dayjs(data.datetime).tz(`${currentTimeZone}`));
       } catch (error) {
-        console.error('Error fetching time:', error);
-        setTime(dayjs().tz('Asia/Tokyo'));
+        console.log('Error fetching time:', error);
+        setTime(dayjs().tz(`${currentTimeZone}`));
       } finally {
         setInitialized(true);
       }
@@ -72,21 +76,6 @@ const SimpleClock = () => {
       }}
     >
       <Analytics />
-      <Typography
-        variant="h3"
-        component="h2"
-        sx={{
-          position: 'absolute',
-          top: theme.spacing(8),
-          width: '100%',
-          textAlign: 'center',
-          color: theme.palette.common.white,
-          zIndex: 1
-        }}
-      >
-        Simple Clock
-      </Typography>
-
       <Box
         sx={{
           position: 'relative',
