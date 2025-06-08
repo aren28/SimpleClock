@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 
 // dayjsプラグインを拡張
 dayjs.extend(utc);
