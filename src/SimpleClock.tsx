@@ -15,31 +15,41 @@ const SimpleClock = () => {
   const [time, setTime] = useState(dayjs());
   const [initialized, setInitialized] = useState(false);
 
+  const fetchTime = async () => {
+    try {
+      const response = await fetch(import.meta.env.VITE_API_URL + currentTimeZone);
+      const data = await response.json();
+      setTime(dayjs(data.datetime).tz(`${currentTimeZone}`));
+    } catch (error) {
+      console.log('Error fetching time:', error);
+      setTime(dayjs().tz(`${currentTimeZone}`));
+    } finally {
+      setInitialized(true);
+    }
+  };
+
   // 初期時刻取得とタイマー設定
   useEffect(() => {
     const guessTimezone = dayjs.tz.guess();
     setCurrentTimeZone(dayjs().tz(guessTimezone));
 
-    const fetchTime = async () => {
-      try {
-        const response = await fetch(import.meta.env.VITE_API_URL + currentTimeZone);
-        const data = await response.json();
-        setTime(dayjs(data.datetime).tz(`${currentTimeZone}`));
-      } catch (error) {
-        console.log('Error fetching time:', error);
-        setTime(dayjs().tz(`${currentTimeZone}`));
-      } finally {
-        setInitialized(true);
-      }
-    };
-
+    // 初期時刻を取得
     fetchTime();
 
     const timer = setInterval(() => {
       setTime(prev => prev.add(1, 'second'));
     }, 1000);
 
-    return () => clearInterval(timer);
+    // 10分ごとにfetchTimeを再実行
+    const fetchInterval = setInterval(() => {
+      fetchTime();
+    }, 10 * 60 * 1000); // 10分
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(fetchInterval);
+    };
+
   }, []);
 
   // 針の角度を計算
