@@ -16,7 +16,6 @@ const SimpleClock = () => {
   const fetchTime = async () => {
     try {
       const guessTimezone = await dayjs.tz.guess();
-      console.log('Guessed Timezone:', `${import.meta.env.VITE_API_ENDPOINT + guessTimezone}`);
       const response = await fetch(import.meta.env.VITE_API_ENDPOINT + guessTimezone);
       const data = await response.json();
       setTime(dayjs(data.datetime).tz(`${guessTimezone}`));
