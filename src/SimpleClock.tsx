@@ -3,7 +3,6 @@ import { Box, Typography, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { Analytics } from "@vercel/analytics/react"
 
 // dayjsプラグインを拡張
 dayjs.extend(utc);
@@ -11,18 +10,17 @@ dayjs.extend(timezone);
 
 const SimpleClock = () => {
   const theme = useTheme();
-  const [currentTimeZone, setCurrentTimeZone] = useState(dayjs());
   const [time, setTime] = useState(dayjs());
   const [initialized, setInitialized] = useState(false);
 
   const fetchTime = async () => {
     try {
-      const response = await fetch(import.meta.env.VITE_API_URL + currentTimeZone);
+      const guessTimezone = await dayjs.tz.guess();
+      const response = await fetch(`${import.meta.env.VITE_API_ENDPOINT + guessTimezone}`);
       const data = await response.json();
-      setTime(dayjs(data.datetime).tz(`${currentTimeZone}`));
+      setTime(dayjs(data.datetime).tz(`${guessTimezone}`));
     } catch (error) {
-      console.log('Error fetching time:', error);
-      setTime(dayjs().tz(`${currentTimeZone}`));
+      console.error('Error fetching time:', error);
     } finally {
       setInitialized(true);
     }
@@ -30,9 +28,6 @@ const SimpleClock = () => {
 
   // 初期時刻取得とタイマー設定
   useEffect(() => {
-    const guessTimezone = dayjs.tz.guess();
-    setCurrentTimeZone(dayjs().tz(guessTimezone));
-
     // 初期時刻を取得
     fetchTime();
 
@@ -85,7 +80,6 @@ const SimpleClock = () => {
         position: 'relative'
       }}
     >
-      <Analytics />
       <Box
         sx={{
           position: 'relative',
