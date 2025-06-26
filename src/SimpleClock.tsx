@@ -8,6 +8,10 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// グローバルでタイマーIDを管理
+let timer: number | undefined;
+let fetchInterval: number | undefined;
+
 const SimpleClock = () => {
   const theme = useTheme();
   const [time, setTime] = useState(dayjs());
@@ -31,19 +35,18 @@ const SimpleClock = () => {
     // 初期時刻を取得
     fetchTime();
 
-    const timer = setInterval(() => {
-      setTime(prev => prev.add(1, 'second'));
-    }, 1000);
+    // すでにタイマーが動いていなければセット
+    if (!timer) {
+      timer = window.setInterval(() => {
+        setTime(prev => prev.add(1, 'second'));
+      }, 1000);
+    }
 
-    // 10分ごとにfetchTimeを再実行
-    const fetchInterval = setInterval(() => {
-      fetchTime();
-    }, 10 * 60 * 1000); // 10分
-
-    return () => {
-      clearInterval(timer);
-      clearInterval(fetchInterval);
-    };
+    if (!fetchInterval) {
+      fetchInterval = window.setInterval(() => {
+        fetchTime();
+      }, 10 * 60 * 1000);
+    }
 
   }, []);
 
