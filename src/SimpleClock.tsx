@@ -9,8 +9,8 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 // グローバルでタイマーIDを管理
-let timer: number | undefined;
-let fetchInterval: number | undefined;
+let timer: ReturnType<typeof setInterval> | undefined;
+let fetchInterval: ReturnType<typeof setInterval> | undefined;
 
 const SimpleClock = () => {
   const theme = useTheme();
@@ -37,15 +37,15 @@ const SimpleClock = () => {
 
     // すでにタイマーが動いていなければセット
     if (!timer) {
-      timer = window.setInterval(() => {
+      timer = setInterval(() => {
         setTime(prev => prev.add(1, 'second'));
       }, 1000);
     }
 
     if (!fetchInterval) {
-      fetchInterval = window.setInterval(() => {
+      fetchInterval = setInterval(() => {
         fetchTime();
-      }, 10 * 60 * 1000);
+      }, 60 * 1000);
     }
 
   }, []);
