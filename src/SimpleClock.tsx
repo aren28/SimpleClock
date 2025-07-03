@@ -3,14 +3,15 @@ import { Box, Typography, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import type { Timer, FetchInterval } from './type/type';
 
 // dayjsプラグインを拡張
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 // グローバルでタイマーIDを管理
-let timer: ReturnType<typeof setInterval> | undefined;
-let fetchInterval: ReturnType<typeof setInterval> | undefined;
+let timer: Timer;
+let fetchInterval: FetchInterval;
 
 const SimpleClock = () => {
   const theme = useTheme();
@@ -32,6 +33,7 @@ const SimpleClock = () => {
 
   // 初期時刻取得とタイマー設定
   useEffect(() => {
+
     // 初期時刻を取得
     fetchTime();
 
@@ -65,6 +67,28 @@ const SimpleClock = () => {
         <Typography variant="h6">Loading...</Typography>
       </Box>
     );
+  }
+
+  // URLのクエリ文字列を取得
+  const queryString = window.location.search;
+
+  // URLSearchParamsオブジェクトを作成して、クエリパラメータを解析
+  const urlParams = new URLSearchParams(queryString);
+
+  // デバッグモードの判定
+  const isDebugMode = urlParams.get('debug') === '1' || queryString.includes('?=1_debug');
+
+  if (isDebugMode) {
+      console.log("debug mode");
+      // 他のデバッグ情報もここに出力
+      console.log(
+        {
+          "scRotation":scRotation,
+          "urlParams": urlParams.toString(),
+        }
+      )
+
+
   }
 
   return (

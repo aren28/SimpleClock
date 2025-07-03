@@ -13,3 +13,7 @@ export type TimeData = {
   dayOfWeek: string;
   dstActive: boolean;
 };
+
+export type Timer = ReturnType<typeof setInterval> | undefined;
+
+export type FetchInterval = ReturnType<typeof setInterval> | undefined;
