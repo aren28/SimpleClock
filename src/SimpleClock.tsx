@@ -76,7 +76,7 @@ const SimpleClock = () => {
   const urlParams = new URLSearchParams(queryString);
 
   // デバッグモードの判定
-  const isDebugMode = urlParams.get('debug') === '1' || queryString.includes('?=1_debug');
+  const isDebugMode = queryString.includes('?=debug');
 
   if (isDebugMode) {
       console.log("debug mode");
@@ -179,7 +179,7 @@ const SimpleClock = () => {
             display: 'flex',
             justifyContent: 'center',
             transform: `rotate(${scRotation}deg)`,
-            transition: 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)'
+            transition: scRotation === 0 ? "none" : 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)'
           }}
         >
           <Box
