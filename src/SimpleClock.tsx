@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, Skeleton, useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -29,6 +30,7 @@ const SimpleClock = () => {
   const [time, setTime] = useState(dayjs());
   const [initialized, setInitialized] = useState(false);
   const [showAnalog, setShowAnalog] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetchTime = async () => {
     try {
@@ -80,8 +82,39 @@ const SimpleClock = () => {
         justifyContent="center"
         alignItems="center"
         minHeight="100vh"
+        sx={{
+          position: 'relative',
+          backgroundColor: 'transparent',
+          display: 'flex',
+          flexDirection: 'column',
+          '&:before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'gray',
+            opacity: 0.8,
+          },
+        }}
       >
-        <Typography variant="h6">Loading...</Typography>
+        <Skeleton
+          animation="wave"
+          variant="rectangular"
+          sx={{
+            width: { xs: '50vw', sm: '70%' },
+            height: { xs: 40, sm: 50 },
+            mb: 2,
+          }}
+        />
+        <Skeleton
+          animation="wave"
+          sx={{
+            width: { xs: '30vw', sm: '40%' },
+            height: { xs: 20, sm: 35 },
+          }}
+        />
       </Box>
     );
   }
@@ -121,7 +154,7 @@ const SimpleClock = () => {
         position: 'relative',
       }}
     >
-      {showAnalog && (
+      {showAnalog ? (
         <Box
           sx={{
             position: 'relative',
@@ -225,26 +258,28 @@ const SimpleClock = () => {
             }}
           />
         </Box>
+      ) : (
+        <>
+          {/* デジタル表示 */}
+          <Typography
+            variant={isMobile ? 'h3' : 'h1'}
+            sx={{
+              mt: 2,
+              color: theme.palette.common.white,
+              fontFamily: 'monospace',
+            }}
+            onClick={() => setShowAnalog((prev) => !prev)}
+          >
+            {time.format('HH:mm:ss')}
+          </Typography>
+          <Typography
+            variant={isMobile ? 'subtitle1' : 'h5'}
+            sx={{ color: theme.palette.grey[400] }}
+          >
+            {time.format('YYYY/MM/DD/ (dddd)')}
+          </Typography>
+        </>
       )}
-
-      {/* デジタル表示 */}
-      <Typography
-        variant={showAnalog ? 'h4' : 'h1'}
-        sx={{
-          mt: 2,
-          color: theme.palette.common.white,
-          fontFamily: 'monospace',
-        }}
-        onClick={() => setShowAnalog((prev) => !prev)}
-      >
-        {time.format('HH:mm:ss')}
-      </Typography>
-      <Typography
-        variant={showAnalog ? 'subtitle1' : 'h5'}
-        sx={{ color: theme.palette.grey[400] }}
-      >
-        {time.format('YYYY/MM/DD/ (dddd)')}
-      </Typography>
     </Box>
   );
 };
