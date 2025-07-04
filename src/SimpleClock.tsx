@@ -5,9 +5,20 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import type { Timer, FetchInterval } from './type/type';
 
+// localeのimport
+import 'dayjs/locale/ja';
+import 'dayjs/locale/en';
+
 // dayjsプラグインを拡張
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+// 言語を自動判定してセット
+const supportedLocales = ['en', 'ja']; // 必要な言語を追加
+const browserLang = navigator.language.toLowerCase();
+const matchedLocale =
+  supportedLocales.find((locale) => browserLang.startsWith(locale)) || 'en';
+dayjs.locale(matchedLocale);
 
 // グローバルでタイマーIDを管理
 let timer: Timer;
@@ -17,11 +28,14 @@ const SimpleClock = () => {
   const theme = useTheme();
   const [time, setTime] = useState(dayjs());
   const [initialized, setInitialized] = useState(false);
+  const [showAnalog, setShowAnalog] = useState(false);
 
   const fetchTime = async () => {
     try {
       const guessTimezone = await dayjs.tz.guess();
-      const response = await fetch(import.meta.env.VITE_API_ENDPOINT + guessTimezone);
+      const response = await fetch(
+        import.meta.env.VITE_API_ENDPOINT + guessTimezone
+      );
       const data = await response.json();
       setTime(dayjs(data.datetime).tz(`${guessTimezone}`));
     } catch (error) {
@@ -33,14 +47,13 @@ const SimpleClock = () => {
 
   // 初期時刻取得とタイマー設定
   useEffect(() => {
-
     // 初期時刻を取得
     fetchTime();
 
     // すでにタイマーが動いていなければセット
     if (!timer) {
       timer = setInterval(() => {
-        setTime(prev => prev.add(1, 'second'));
+        setTime((prev) => prev.add(1, 'second'));
       }, 1000);
     }
 
@@ -49,7 +62,6 @@ const SimpleClock = () => {
         fetchTime();
       }, 60 * 1000);
     }
-
   }, []);
 
   // 針の角度を計算
@@ -63,7 +75,12 @@ const SimpleClock = () => {
 
   if (!initialized) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
         <Typography variant="h6">Loading...</Typography>
       </Box>
     );
@@ -79,16 +96,13 @@ const SimpleClock = () => {
   const isDebugMode = queryString.includes('?=debug');
 
   if (isDebugMode) {
-      console.log("debug mode");
-      // 他のデバッグ情報もここに出力
-      console.log(
-        {
-          "scRotation":scRotation,
-          "urlParams": urlParams.toString(),
-        }
-      )
-
-
+    console.log('debug mode');
+    // 他のデバッグ情報もここに出力
+    console.log({
+      scRotation: scRotation,
+      urlParams: urlParams.toString(),
+      browserLang: browserLang,
+    });
   }
 
   return (
@@ -104,125 +118,132 @@ const SimpleClock = () => {
         minHeight: '100vh',
         backgroundColor: theme.palette.mode === 'dark' ? '#121212' : '#000',
         color: theme.palette.common.white,
-        position: 'relative'
+        position: 'relative',
       }}
     >
-      <Box
-        sx={{
-          position: 'relative',
-          width: 350,
-          height: 350,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background: 'url(https://lokeshpareek-mob.github.io/img/clock.png)',
-          backgroundSize: 'cover',
-          borderRadius: '50%',
-          boxShadow: theme.shadows[10],
-          mb: 4
-        }}
-      >
-        {/* 時針 */}
+      {showAnalog && (
         <Box
           sx={{
-            position: 'absolute',
-            width: 160,
-            height: 160,
+            position: 'relative',
+            width: 350,
+            height: 350,
             display: 'flex',
             justifyContent: 'center',
-            transform: `rotate(${hrRotation}deg)`,
-            transition: 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)'
-          }}
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              width: 6,
-              height: 80,
-              backgroundColor: theme.palette.secondary.main,
-              zIndex: 10,
-              borderRadius: '6px 6px 0 0'
-            }}
-          />
-        </Box>
-
-        {/* 分針 */}
-        <Box
-          sx={{
-            position: 'absolute',
-            width: 190,
-            height: 190,
-            display: 'flex',
-            justifyContent: 'center',
-            transform: `rotate(${mnRotation}deg)`,
-            transition: 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)'
-          }}
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              width: 4,
-              height: 90,
-              backgroundColor: theme.palette.common.white,
-              zIndex: 11,
-              borderRadius: '6px 6px 0 0'
-            }}
-          />
-        </Box>
-
-        {/* 秒針 */}
-        <Box
-          sx={{
-            position: 'absolute',
-            width: 230,
-            height: 230,
-            display: 'flex',
-            justifyContent: 'center',
-            transform: `rotate(${scRotation}deg)`,
-            transition: scRotation === 0 ? "none" : 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)'
-          }}
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              width: 2,
-              height: 150,
-              backgroundColor: theme.palette.primary.main,
-              zIndex: 12,
-              borderRadius: '6px 6px 0 0'
-            }}
-          />
-        </Box>
-
-        {/* 中心点 */}
-        <Box
-          sx={{
-            position: 'absolute',
-            width: 15,
-            height: 15,
-            backgroundColor: theme.palette.common.white,
+            alignItems: 'center',
+            background: 'url(https://lokeshpareek-mob.github.io/img/clock.png)',
+            backgroundSize: 'cover',
             borderRadius: '50%',
-            zIndex: 10000
+            boxShadow: theme.shadows[10],
+            mb: 4,
           }}
-        />
-      </Box>
+          onClick={() => setShowAnalog((prev) => !prev)}
+        >
+          {/* 時針 */}
+          <Box
+            sx={{
+              position: 'absolute',
+              width: 160,
+              height: 160,
+              display: 'flex',
+              justifyContent: 'center',
+              transform: `rotate(${hrRotation}deg)`,
+              transition: 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)',
+            }}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                width: 6,
+                height: 80,
+                backgroundColor: theme.palette.secondary.main,
+                zIndex: 10,
+                borderRadius: '6px 6px 0 0',
+              }}
+            />
+          </Box>
+
+          {/* 分針 */}
+          <Box
+            sx={{
+              position: 'absolute',
+              width: 190,
+              height: 190,
+              display: 'flex',
+              justifyContent: 'center',
+              transform: `rotate(${mnRotation}deg)`,
+              transition: 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)',
+            }}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                width: 4,
+                height: 90,
+                backgroundColor: theme.palette.common.white,
+                zIndex: 11,
+                borderRadius: '6px 6px 0 0',
+              }}
+            />
+          </Box>
+
+          {/* 秒針 */}
+          <Box
+            sx={{
+              position: 'absolute',
+              width: 230,
+              height: 230,
+              display: 'flex',
+              justifyContent: 'center',
+              transform: `rotate(${scRotation}deg)`,
+              transition:
+                scRotation === 0
+                  ? 'none'
+                  : 'transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1)',
+            }}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                width: 2,
+                height: 150,
+                backgroundColor: theme.palette.primary.main,
+                zIndex: 12,
+                borderRadius: '6px 6px 0 0',
+              }}
+            />
+          </Box>
+
+          {/* 中心点 */}
+          <Box
+            sx={{
+              position: 'absolute',
+              width: 15,
+              height: 15,
+              backgroundColor: theme.palette.common.white,
+              borderRadius: '50%',
+              zIndex: 10000,
+            }}
+          />
+        </Box>
+      )}
 
       {/* デジタル表示 */}
       <Typography
-        variant="h4"
+        variant={showAnalog ? 'h4' : 'h1'}
         sx={{
           mt: 2,
           color: theme.palette.common.white,
-          fontFamily: 'monospace'
+          fontFamily: 'monospace',
         }}
+        onClick={() => setShowAnalog((prev) => !prev)}
       >
         {time.format('HH:mm:ss')}
       </Typography>
       <Typography
-        variant="subtitle1"
+        variant={showAnalog ? 'subtitle1' : 'h5'}
         sx={{ color: theme.palette.grey[400] }}
       >
-        {time.format('YYYY年MM月DD日 (dddd)')}
+        {time.format('YYYY/MM/DD/ (dddd)')}
       </Typography>
     </Box>
   );

@@ -21,22 +21,23 @@ A hybrid clock app that shows smooth animations based on accurate time data fetc
 
 ## 🛠 Tech Stack
 
-| カテゴリ       | 技術要素                  |
-|----------------|---------------------------|
-| Frontend | React 19, TypeScript 5    |
-| UI Framework| MUI (Material-UI v5)      |
-| Hosting    | Vercel                    |
-| Version Control | GitHub                    |
-| Code Quality      | ESLint          |
+| カテゴリ        | 技術要素               |
+| --------------- | ---------------------- |
+| Frontend        | React 19, TypeScript 5 |
+| UI Framework    | MUI (Material-UI v5)   |
+| Hosting         | Vercel                 |
+| Version Control | GitHub                 |
+| Code Quality    | ESLint                 |
 
 ## 🚀 Setup
 
 ```bash
-# Clone the repository  
+# Clone the repository
 git clone https://github.com/aren28/SimpleClock.git
 
 # Install dependencies
 npm install
 
-# Start the development server (localhost:3000)  
+# Start the development server (localhost:3000)
 npm run dev
+```
