@@ -35,11 +35,8 @@ const SimpleClock = () => {
   const fetchTime = async () => {
     try {
       const guessTimezone = await dayjs.tz.guess();
-      const response = await fetch(
-        import.meta.env.VITE_API_ENDPOINT + guessTimezone
-      );
-      const data = await response.json();
-      setTime(dayjs(data.datetime).tz(`${guessTimezone}`));
+      const response = dayjs();
+      setTime(response.tz(guessTimezone));
     } catch (error) {
       console.error('Error fetching time:', error);
     } finally {
